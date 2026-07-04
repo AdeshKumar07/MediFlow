@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: mediflow-api
+    env: node
+    region: singapore  # closest to India; change to oregon/frankfurt as needed
+    plan: free          # upgrade to starter ($7/mo) for persistent disks
+
+    # Build & start
+    buildCommand: npm install --production
+    startCommand: node server.js
+
+    # Health check — Render will restart if this fails
+    healthCheckPath: /health
+
+    # Auto-deploy on push to main
+    autoDeploy: true
+    branch: main
+
+    # Environment variables (set actual values in Render dashboard, not here)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000        # Render assigns this automatically
+      - key: MONGODB_URI
+        sync: false         # set in dashboard
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_ACCESS_EXPIRATION
+        value: 15m
+      - key: JWT_REFRESH_EXPIRATION
+        value: 7d
+      - key: ALLOWED_ORIGINS
+        sync: false         # set to your Vercel URL
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false

@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-slate-50 text-slate-800;
+  }
+}
+
+/* Custom premium scrollbar for enterprise dashboard look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded hover:bg-brand-600 transition-colors duration-200;
+}
+
+/* Premium White SaaS Card Utility */
+.glass {
+  background: #ffffff;
+  border: 1px solid #e2e8f0; /* border-slate-200 */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+.glass-light {
+  background: #f8fafc; /* slate-50 */
+  border: 1px solid #e2e8f0; /* slate-200 */
+}
+
+/* Custom transitions and hover effects */
+.transition-card {
+  @apply transition-all duration-300 ease-in-out hover:shadow-md hover:border-slate-300 hover:scale-[1.01];
+}
+
+.transition-button {
+  @apply transition-all duration-200 ease-in-out hover:opacity-90 active:scale-95;
+}
+
+/* Custom animations */
+@keyframes borderPulse {
+  0%, 100% { border-color: rgba(37, 99, 235, 0.15); }
+  50% { border-color: rgba(37, 99, 235, 0.4); }
+}
+
+.animate-border-pulse {
+  animation: borderPulse 4s infinite;
+}
+
+/* Page fade-in transition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
