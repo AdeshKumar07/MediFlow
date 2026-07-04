@@ -41,6 +41,12 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Last name is required'],
       trim: true
     },
+    phone: {
+      type: String,
+      required: [true, 'Phone number is required'],
+      trim: true,
+      match: [/^[+]?[0-9]{7,15}$/, 'Please provide a valid phone number']
+    },
     profileImage: {
       type: String,
       trim: true

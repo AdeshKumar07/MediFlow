@@ -47,6 +47,12 @@ const registerValidator = [
     .trim()
     .notEmpty()
     .withMessage('Last name is required'),
+  check('phone')
+    .trim()
+    .notEmpty()
+    .withMessage('Phone number is required')
+    .matches(/^[+]?[0-9]{7,15}$/)
+    .withMessage('Please provide a valid phone number (7–15 digits, optional + prefix)'),
   handleValidationErrors
 ];
 

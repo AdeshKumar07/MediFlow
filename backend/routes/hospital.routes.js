@@ -226,7 +226,7 @@ router.put('/departments/:id', authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN
  */
 router.post(
   '/images',
-  authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN),
+  authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN, ROLES.DOCTOR, ROLES.NURSE, ROLES.RECEPTIONIST, ROLES.PHARMACIST, ROLES.LAB_TECH),
   hospitalImageUpload.single('image'),
   hospitalController.uploadImage
 );
@@ -254,7 +254,7 @@ router.post(
  */
 router.delete(
   '/images/:id',
-  authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN, ROLES.DOCTOR),
+  authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN),
   hospitalController.deleteImage
 );
 
