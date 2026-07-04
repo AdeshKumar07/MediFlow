@@ -39,3 +39,22 @@ export const updateDepartment = async (id, data) => {
   const response = await api.put(`/hospital/departments/${id}`, data);
   return response.data;
 };
+
+// Hospital Gallery Images
+export const getHospitalImages = async () => {
+  const response = await api.get('/hospital/images');
+  return response.data;
+};
+
+export const uploadHospitalImage = async (formData) => {
+  const response = await api.post('/hospital/images', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+export const deleteHospitalImage = async (id) => {
+  const response = await api.delete(`/hospital/images/${id}`);
+  return response.data;
+};
+

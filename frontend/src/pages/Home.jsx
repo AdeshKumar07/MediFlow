@@ -1,15 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Activity, ArrowRight, ShieldCheck, Heart, Users, Calendar, 
-  FlaskConical, Pill, Receipt, CheckCircle, BarChart3 
+  FlaskConical, Pill, Receipt, CheckCircle, BarChart3, Images, ZoomIn, X 
 } from 'lucide-react';
 import heroImage from '../assets/hospital_hero.png';
+import { getHospitalImages } from '../services/hospitalService';
 
 const Home = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeLightbox, setActiveLightbox] = useState(null);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const res = await getHospitalImages();
+        setImages(res.data || []);
+      } catch (err) {
+        console.error('Failed to fetch hospital images', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchImages();
+  }, []);
+
+  const getBaseUrl = () => {
+    return import.meta.env.VITE_API_URL
+      ? import.meta.env.VITE_API_URL.replace('/api', '')
+      : '';
+  };
 
   const handlePortalRedirect = () => {
     if (user) {
@@ -171,6 +195,49 @@ const Home = () => {
               </p>
             </div>
           </div>
+
+          {/* Hospital Gallery / Facilities Section */}
+          {!isLoading && images.length > 0 && (
+            <div className="pt-16 border-t border-slate-200 space-y-10">
+              <div className="text-center space-y-3 max-w-2xl mx-auto">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-50 border border-brand-100 rounded-full text-xs font-semibold text-brand-700">
+                  <Images className="h-3.5 w-3.5" /> Our Facilities
+                </div>
+                <h2 className="font-outfit text-3xl font-extrabold text-slate-900">Explore Our Hospital</h2>
+                <p className="text-slate-500 text-sm sm:text-base font-semibold leading-relaxed">
+                  Take a visual tour of our modern state-of-the-art medical equipment, clinical wards, and healthcare facilities.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {images.map((img) => (
+                  <div 
+                    key={img._id} 
+                    className="group relative bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 cursor-pointer"
+                    onClick={() => setActiveLightbox(img)}
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                      <img 
+                        src={`${getBaseUrl()}${img.url}`} 
+                        alt={img.caption || 'Hospital facility'} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <span className="flex items-center gap-1 bg-white/95 backdrop-blur text-slate-900 px-3 py-2 rounded-xl text-xs font-bold shadow-lg">
+                          <ZoomIn className="w-3.5 h-3.5" /> View Photo
+                        </span>
+                      </div>
+                    </div>
+                    {img.caption && (
+                      <div className="p-4 border-t border-slate-100 bg-white">
+                        <p className="text-sm font-bold text-slate-900 truncate">{img.caption}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -303,6 +370,36 @@ const Home = () => {
           </div>
         </div>
       </footer>
+
+      {/* Lightbox Modal */}
+      {activeLightbox && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
+          onClick={() => setActiveLightbox(null)}
+        >
+          <div 
+            className="relative max-w-4xl w-full mx-4 rounded-2xl overflow-hidden shadow-2xl bg-slate-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              src={`${getBaseUrl()}${activeLightbox.url}`} 
+              alt={activeLightbox.caption || 'Hospital Facility'} 
+              className="w-full max-h-[85vh] object-contain mx-auto"
+            />
+            {activeLightbox.caption && (
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent px-6 py-5">
+                <p className="text-white text-lg font-semibold">{activeLightbox.caption}</p>
+              </div>
+            )}
+            <button 
+              onClick={() => setActiveLightbox(null)}
+              className="absolute top-3 right-3 bg-black/50 hover:bg-black/80 text-white rounded-full p-2.5 transition-colors border border-white/10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

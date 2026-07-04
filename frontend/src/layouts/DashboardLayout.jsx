@@ -33,7 +33,8 @@ import {
   DollarSign,
   PieChart,
   FileBarChart,
-  MessageSquare
+  MessageSquare,
+  Images
 } from 'lucide-react';
 
 const DashboardLayout = () => {
@@ -83,6 +84,7 @@ const DashboardLayout = () => {
           { name: 'Hospital Profile', path: '/dashboard/hospital', icon: Building },
           { name: 'Branches', path: '/dashboard/branches', icon: Building2 },
           { name: 'Departments', path: '/dashboard/departments', icon: Building2 },
+          { name: 'Hospital Gallery', path: '/dashboard/hospital/gallery', icon: Images },
           { name: 'Staff Directory', path: '/dashboard/staff', icon: Users },
           { name: 'Patients', path: '/dashboard/patients', icon: FolderHeart },
           { name: 'Pharmacy Inventory', path: '/dashboard/pharmacy', icon: Boxes },
@@ -102,6 +104,7 @@ const DashboardLayout = () => {
           { name: 'Hospital Profile', path: '/dashboard/hospital', icon: Building },
           { name: 'Branches', path: '/dashboard/branches', icon: Building2 },
           { name: 'Departments', path: '/dashboard/departments', icon: Building2 },
+          { name: 'Hospital Gallery', path: '/dashboard/hospital/gallery', icon: Images },
           { name: 'Staff Directory', path: '/dashboard/staff', icon: Users },
           { name: 'Patients', path: '/dashboard/patients', icon: FolderHeart },
           { name: 'Invoices & Billing', path: '/dashboard/billing', icon: Receipt },
@@ -116,6 +119,7 @@ const DashboardLayout = () => {
         return [
           ...defaultLinks,
           { name: 'My Team', path: '/dashboard/doctor/team', icon: Users },
+          { name: 'Hospital Gallery', path: '/dashboard/hospital/gallery', icon: Images },
           { name: 'Patient Messages', path: '/dashboard/doctor/messages', icon: MessageSquare },
           { name: 'My Appointments', path: '/dashboard/appointments', icon: Calendar },
           { name: 'E-Prescriptions', path: '/dashboard/pharmacy/prescriptions', icon: FileSpreadsheet },
@@ -233,7 +237,7 @@ const DashboardLayout = () => {
           <Link to="/dashboard/profile" className="flex items-center gap-3 p-2 rounded-xl bg-white border border-slate-200 mb-3 hover:border-slate-300 hover:shadow-sm transition-all duration-200">
             {user?.profileImage ? (
               <img
-                src={user.profileImage.startsWith('http') ? user.profileImage : `http://localhost:5000${user.profileImage}`}
+                src={user.profileImage.startsWith('http') ? user.profileImage : user.profileImage}
                 alt="Profile"
                 className="h-9 w-9 rounded-full object-cover border border-slate-100"
               />
@@ -366,7 +370,7 @@ const DashboardLayout = () => {
             <Link to="/dashboard/profile" className="flex items-center gap-2 border-l border-slate-200 pl-4 hover:opacity-85 transition-opacity">
               {user?.profileImage ? (
                 <img
-                  src={user.profileImage.startsWith('http') ? user.profileImage : `http://localhost:5000${user.profileImage}`}
+                  src={user.profileImage.startsWith('http') ? user.profileImage : user.profileImage}
                   alt="Profile"
                   className="h-8 w-8 rounded-full object-cover border border-slate-200 shadow-sm"
                 />

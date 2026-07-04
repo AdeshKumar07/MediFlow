@@ -128,7 +128,7 @@ const Profile = () => {
     if (user?.profileImage) {
       return user.profileImage.startsWith('http') 
         ? user.profileImage 
-        : `http://localhost:5000${user.profileImage}`;
+        : user.profileImage;
     }
     return null;
   };

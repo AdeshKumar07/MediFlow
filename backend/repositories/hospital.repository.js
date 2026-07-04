@@ -1,6 +1,8 @@
 const Hospital = require('../models/hospital.model');
 const Branch = require('../models/branch.model');
 const Department = require('../models/department.model');
+const HospitalImage = require('../models/hospitalImage.model');
+
 
 class HospitalRepository {
   // Hospital
@@ -52,6 +54,23 @@ class HospitalRepository {
   
   async updateDepartment(id, data) {
     return await Department.findByIdAndUpdate(id, data, { new: true });
+  }
+
+  // Hospital Images
+  async getImages() {
+    return await HospitalImage.find().sort({ createdAt: -1 }).populate('uploadedBy', 'firstName lastName role');
+  }
+
+  async createImage(data) {
+    return await HospitalImage.create(data);
+  }
+
+  async findImageById(id) {
+    return await HospitalImage.findById(id);
+  }
+
+  async deleteImage(id) {
+    return await HospitalImage.findByIdAndDelete(id);
   }
 }
 

@@ -5,6 +5,20 @@ const router = express.Router();
 const hospitalController = require('../controllers/hospital.controller');
 const { protect, authorize } = require('../middlewares/auth.middleware');
 const ROLES = require('../constants/roles');
+const { hospitalImageUpload } = require('../middlewares/upload.middleware');
+
+
+/**
+ * @swagger
+ * /api/hospital/images:
+ *   get:
+ *     summary: Get all hospital gallery images
+ *     tags: [Hospital]
+ *     responses:
+ *       200:
+ *         description: List of hospital images
+ */
+router.get('/images', hospitalController.getImages);
 
 router.use(protect);
 
@@ -182,5 +196,66 @@ router.post('/departments', authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN), 
  *         description: Department updated successfully
  */
 router.put('/departments/:id', authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN), hospitalController.updateDepartment);
+
+// ════════════════════════════════════════════════════════════════════
+//  Hospital Gallery Images
+// ════════════════════════════════════════════════════════════════════
+
+/**
+ * @swagger
+ * /api/hospital/images:
+ *   post:
+ *     summary: Upload a new hospital gallery image
+ *     tags: [Hospital]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image: { type: string, format: binary }
+ *               caption: { type: string, example: 'Reception Area' }
+ *     responses:
+ *       201:
+ *         description: Image uploaded successfully
+ *       403:
+ *         description: Forbidden — admins only
+ */
+router.post(
+  '/images',
+  authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN),
+  hospitalImageUpload.single('image'),
+  hospitalController.uploadImage
+);
+
+/**
+ * @swagger
+ * /api/hospital/images/{id}:
+ *   delete:
+ *     summary: Delete a hospital gallery image
+ *     tags: [Hospital]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Image deleted successfully
+ *       403:
+ *         description: Forbidden — admins and doctors only
+ *       404:
+ *         description: Image not found
+ */
+router.delete(
+  '/images/:id',
+  authorize(ROLES.SUPER_ADMIN, ROLES.HOSPITAL_ADMIN, ROLES.DOCTOR),
+  hospitalController.deleteImage
+);
 
 module.exports = router;

@@ -13,6 +13,8 @@ import { useAuth } from '../context/AuthContext';
 import HospitalProfile from '../pages/hospital/HospitalProfile';
 import BranchesList from '../pages/hospital/BranchesList';
 import DepartmentsList from '../pages/hospital/DepartmentsList';
+import HospitalGallery from '../pages/hospital/HospitalGallery';
+
 import StaffList from '../pages/staff/StaffList';
 import StaffForm from '../pages/staff/StaffForm';
 import PatientsList from '../pages/patients/PatientsList';
@@ -73,6 +75,7 @@ const AppRoutes = () => {
           
           {/* Module 2 Routes */}
           <Route path="hospital" element={<HospitalProfile />} />
+          <Route path="hospital/gallery" element={<HospitalGallery />} />
           <Route path="branches" element={<BranchesList />} />
           <Route path="departments" element={<DepartmentsList />} />
           <Route path="staff" element={<StaffList />} />

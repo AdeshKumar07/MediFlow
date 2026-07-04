@@ -17,7 +17,7 @@ const globalLimiter = rateLimit({
     message: 'Too many requests from this IP, please try again after 15 minutes.',
     errors: []
   },
-  skip: (req) => process.env.NODE_ENV === 'test'
+  skip: (req) => process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development'
 });
 
 /**
@@ -26,7 +26,7 @@ const globalLimiter = rateLimit({
  */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 10000, // Increased limit for dev
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -35,7 +35,7 @@ const authLimiter = rateLimit({
     message: 'Too many authentication attempts. Please wait 15 minutes before trying again.',
     errors: []
   },
-  skip: (req) => process.env.NODE_ENV === 'test'
+  skip: (req) => process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development'
 });
 
 /**
@@ -44,7 +44,7 @@ const authLimiter = rateLimit({
  */
 const reportLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30,
+  max: 300, // Increased limit for dev
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -53,7 +53,7 @@ const reportLimiter = rateLimit({
     message: 'Report generation limit reached. Please wait 15 minutes.',
     errors: []
   },
-  skip: (req) => process.env.NODE_ENV === 'test'
+  skip: (req) => process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development'
 });
 
 module.exports = { globalLimiter, authLimiter, reportLimiter };

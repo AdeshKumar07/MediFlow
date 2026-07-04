@@ -1,5 +1,8 @@
 const hospitalService = require('../services/hospital.service');
 const ApiError = require('../utils/apiError');
+const path = require('path');
+const fs = require('fs');
+
 
 class HospitalController {
   async getHospitalProfile(req, res, next) {
@@ -66,6 +69,49 @@ class HospitalController {
       const dept = await hospitalService.updateDepartment(req.params.id, req.body);
       if (!dept) throw new ApiError(404, 'Department not found');
       res.status(200).json({ success: true, data: dept });
+    } catch (error) { next(error); }
+  }
+
+  // ── Gallery Images ──────────────────────────────────────────────────────────
+
+  async getImages(req, res, next) {
+    try {
+      const images = await hospitalService.getImages();
+      res.status(200).json({ success: true, data: images });
+    } catch (error) { next(error); }
+  }
+
+  async uploadImage(req, res, next) {
+    try {
+      if (!req.file) throw new ApiError(400, 'No image file provided');
+
+      const { caption } = req.body;
+      const url = `/uploads/hospital-images/${req.file.filename}`;
+
+      const image = await hospitalService.uploadImage({
+        url,
+        filename: req.file.filename,
+        caption: caption || '',
+        uploadedBy: req.user._id
+      });
+
+      res.status(201).json({ success: true, data: image });
+    } catch (error) { next(error); }
+  }
+
+  async deleteImage(req, res, next) {
+    try {
+      const image = await hospitalService.findImageById(req.params.id);
+      if (!image) throw new ApiError(404, 'Image not found');
+
+      // Remove file from disk
+      const filePath = path.join(__dirname, '..', 'uploads', 'hospital-images', image.filename);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+
+      await hospitalService.deleteImage(req.params.id);
+      res.status(200).json({ success: true, message: 'Image deleted successfully' });
     } catch (error) { next(error); }
   }
 }

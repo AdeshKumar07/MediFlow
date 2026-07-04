@@ -42,6 +42,11 @@ const createIndexes = async () => {
     await Invoice.collection.createIndex({ patientId: 1, status: 1 },    { background: true });
     await Invoice.collection.createIndex({ status: 1, createdAt: -1 },   { background: true });
     await Invoice.collection.createIndex({ createdAt: -1 },              { background: true });
+    try {
+      await Invoice.collection.dropIndex("invoiceNumber_1");
+    } catch (e) {
+      // Ignore if index does not exist or matches options
+    }
     await Invoice.collection.createIndex({ invoiceNumber: 1 },           { unique: true, sparse: true, background: true });
     await Invoice.collection.createIndex({ appointmentId: 1 },           { sparse: true, background: true });
 
@@ -49,6 +54,11 @@ const createIndexes = async () => {
     await Payment.collection.createIndex({ patientId: 1, status: 1 },   { background: true });
     await Payment.collection.createIndex({ invoiceId: 1 },              { background: true });
     await Payment.collection.createIndex({ status: 1, paidAt: -1 },     { background: true });
+    try {
+      await Payment.collection.dropIndex("receiptNumber_1");
+    } catch (e) {
+      // Ignore if index does not exist or matches options
+    }
     await Payment.collection.createIndex({ receiptNumber: 1 },          { unique: true, sparse: true, background: true });
 
     // ── Medicine ──────────────────────────────────────────────────────

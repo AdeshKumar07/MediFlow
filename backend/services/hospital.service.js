@@ -38,6 +38,22 @@ class HospitalService {
   async updateDepartment(id, data) {
     return await hospitalRepository.updateDepartment(id, data);
   }
+
+  async getImages() {
+    return await hospitalRepository.getImages();
+  }
+
+  async uploadImage(data) {
+    return await hospitalRepository.createImage(data);
+  }
+
+  async findImageById(id) {
+    return await hospitalRepository.findImageById(id);
+  }
+
+  async deleteImage(id) {
+    return await hospitalRepository.deleteImage(id);
+  }
 }
 
 module.exports = new HospitalService();
