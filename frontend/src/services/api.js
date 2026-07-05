@@ -1,6 +1,7 @@
-// In production (Vercel), use the full Render backend URL via VITE_API_URL env var.
-// In development, fall back to '/api' which is proxied by Vite → localhost:5000.
-const API_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
+// In production, communicate directly with the Render backend (bypassing Vercel proxy).
+// We already configured CORS and cross-domain cookies (sameSite: 'none') on the backend.
+const isProd = import.meta.env.MODE === 'production';
+const API_URL = isProd ? 'https://mediflow-n49c.onrender.com/api' : '/api';
 import axios from 'axios';
 
 const api = axios.create({
