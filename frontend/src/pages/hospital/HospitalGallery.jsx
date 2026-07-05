@@ -60,11 +60,22 @@ const Lightbox = ({ image, onClose }) => {
           alt={image.caption || 'Hospital Image'}
           className="w-full max-h-[80vh] object-contain bg-gray-900"
         />
-        {image.caption && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-6 py-4">
-            <p className="text-white text-lg font-semibold">{image.caption}</p>
+        {(image.caption || image.details || image.address || image.phoneNumber) && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-6 pt-12 pb-6">
+            {image.caption && <p className="text-white text-xl font-bold mb-1">{image.caption}</p>}
+            
+            {(image.address || image.phoneNumber) && (
+              <div className="flex items-center gap-4 text-white/80 text-sm mb-2">
+                {image.phoneNumber && <span className="flex items-center gap-1">📞 {image.phoneNumber}</span>}
+                {image.address && <span className="flex items-center gap-1">📍 {image.address}</span>}
+              </div>
+            )}
+            
+            {image.details && <p className="text-white/70 text-sm mb-3 line-clamp-2">{image.details}</p>}
+
             {image.uploadedBy && (
-              <p className="text-white/60 text-sm mt-1">
+              <p className="text-white/50 text-xs flex items-center gap-1 border-t border-white/10 pt-2 w-fit">
+                <User className="w-3 h-3" />
                 Uploaded by {image.uploadedBy.firstName} {image.uploadedBy.lastName}
               </p>
             )}
@@ -117,6 +128,9 @@ const UploadModal = ({ onClose, onSuccess }) => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [caption, setCaption] = useState('');
+  const [address, setAddress] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [details, setDetails] = useState('');
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
@@ -151,6 +165,9 @@ const UploadModal = ({ onClose, onSuccess }) => {
       const formData = new FormData();
       formData.append('image', file);
       formData.append('caption', caption);
+      formData.append('address', address);
+      formData.append('phoneNumber', phoneNumber);
+      formData.append('details', details);
       await uploadHospitalImage(formData);
       toast.success('Image uploaded successfully!');
       onSuccess();
@@ -164,9 +181,9 @@ const UploadModal = ({ onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center">
               <Upload className="w-5 h-5 text-blue-600" />
@@ -181,70 +198,112 @@ const UploadModal = ({ onClose, onSuccess }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Drop Zone */}
-          <div
-            className={`relative border-2 border-dashed rounded-xl transition-all cursor-pointer
-              ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}
-              ${preview ? 'border-green-300 bg-green-50' : ''}
-            `}
-            style={{ minHeight: '180px' }}
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={handleDrop}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleFile(e.target.files[0])}
-            />
-            {preview ? (
-              <div className="relative">
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="w-full h-48 object-cover rounded-xl"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-xl opacity-0 hover:opacity-100 transition-opacity">
-                  <p className="text-white text-sm font-medium">Click to change</p>
+        <div className="overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            {/* Drop Zone */}
+            <div
+              className={`relative border-2 border-dashed rounded-xl transition-all cursor-pointer
+                ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}
+                ${preview ? 'border-green-300 bg-green-50' : ''}
+              `}
+              style={{ minHeight: '180px' }}
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleFile(e.target.files[0])}
+              />
+              {preview ? (
+                <div className="relative">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded-xl"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-xl opacity-0 hover:opacity-100 transition-opacity">
+                    <p className="text-white text-sm font-medium">Click to change</p>
+                  </div>
+                  <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
-                  <CheckCircle2 className="w-4 h-4" />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-44 gap-3">
+                  <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <Images className="w-7 h-7 text-gray-400" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-gray-600">
+                      {isDragging ? 'Drop your image here' : 'Drag & drop or click to browse'}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP, GIF — Max 10MB</p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-44 gap-3">
-                <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center">
-                  <Images className="w-7 h-7 text-gray-400" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold text-gray-600">
-                    {isDragging ? 'Drop your image here' : 'Drag & drop or click to browse'}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP, GIF — Max 10MB</p>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Caption Input */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Caption <span className="text-gray-400 font-normal">(optional)</span>
-            </label>
-            <input
-              type="text"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              maxLength={200}
-              placeholder="e.g. Main Reception Area, ICU Ward..."
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
-            />
-            <p className="text-xs text-gray-400 mt-1 text-right">{caption.length}/200</p>
-          </div>
+            {/* Form Fields Grid */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Name / Caption
+                </label>
+                <input
+                  type="text"
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                  maxLength={200}
+                  placeholder="e.g. Apollo Main Hospital, ICU Ward..."
+                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="e.g. +91 9876543210"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="e.g. MG Road, Bengaluru"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Additional Details
+                </label>
+                <textarea
+                  value={details}
+                  onChange={(e) => setDetails(e.target.value)}
+                  rows="3"
+                  placeholder="Enter details about facilities, specialties, or timings..."
+                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition resize-none"
+                />
+              </div>
+            </div>
 
           {/* Actions */}
           <div className="flex gap-3 pt-1">
@@ -275,6 +334,7 @@ const UploadModal = ({ onClose, onSuccess }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );
@@ -342,16 +402,26 @@ const ImageCard = ({ image, canDelete, onDelete, onView }) => {
         ) : (
           <p className="text-sm text-gray-400 italic">No caption</p>
         )}
-        <div className="flex items-center gap-3 mt-2">
+        
+        {/* Address and Phone */}
+        {(image.address || image.phoneNumber) && (
+          <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 truncate">
+            {image.address && <span className="truncate">📍 {image.address}</span>}
+            {image.address && image.phoneNumber && <span>•</span>}
+            {image.phoneNumber && <span>📞 {image.phoneNumber}</span>}
+          </div>
+        )}
+
+        <div className="flex items-center gap-3 mt-3 pt-2 border-t border-gray-50">
           {image.uploadedBy && (
-            <div className="flex items-center gap-1 text-xs text-gray-500">
+            <div className="flex items-center gap-1 text-[11px] text-gray-400">
               <User className="w-3 h-3" />
-              <span className="truncate max-w-[100px]">
+              <span className="truncate max-w-[90px]">
                 {image.uploadedBy.firstName} {image.uploadedBy.lastName}
               </span>
             </div>
           )}
-          <div className="flex items-center gap-1 text-xs text-gray-400 ml-auto">
+          <div className="flex items-center gap-1 text-[11px] text-gray-400 ml-auto">
             <Clock className="w-3 h-3" />
             <span>{formatDate(image.createdAt)}</span>
           </div>

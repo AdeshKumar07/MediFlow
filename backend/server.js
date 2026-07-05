@@ -2,6 +2,18 @@
 
 require('dotenv').config();
 const path         = require('path');
+const fs           = require('fs');
+
+// Ensure upload directories exist on startup (especially for Render ephemeral filesystem)
+const uploadDirs = [
+  path.join(__dirname, 'uploads'),
+  path.join(__dirname, 'uploads', 'hospital-images')
+];
+uploadDirs.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 const express      = require('express');
 const cors         = require('cors');
 const helmet       = require('helmet');

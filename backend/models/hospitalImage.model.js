@@ -16,6 +16,18 @@ const hospitalImageSchema = new mongoose.Schema(
       trim: true,
       maxlength: [200, 'Caption cannot exceed 200 characters']
     },
+    address: {
+      type: String,
+      trim: true
+    },
+    phoneNumber: {
+      type: String,
+      trim: true
+    },
+    details: {
+      type: String,
+      trim: true
+    },
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

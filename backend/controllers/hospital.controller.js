@@ -85,13 +85,16 @@ class HospitalController {
     try {
       if (!req.file) throw new ApiError(400, 'No image file provided');
 
-      const { caption } = req.body;
+      const { caption, address, phoneNumber, details } = req.body;
       const url = `/uploads/hospital-images/${req.file.filename}`;
 
       const image = await hospitalService.uploadImage({
         url,
         filename: req.file.filename,
         caption: caption || '',
+        address: address || '',
+        phoneNumber: phoneNumber || '',
+        details: details || '',
         uploadedBy: req.user._id
       });
 

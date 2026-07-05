@@ -33,7 +33,7 @@ services:
       - key: JWT_REFRESH_EXPIRATION
         value: 7d
       - key: ALLOWED_ORIGINS
-        value: "https://medi-flow-mfl07684z-adeshkumar07s-projects.vercel.app,https://mediflow-n49c.onrender.com"
+        value: "https://medi-flow-delta.vercel.app,https://medi-flow-git-main-adeshkumar07s-projects.vercel.app,https://medi-flow-mfl07684z-adeshkumar07s-projects.vercel.app,https://mediflow-n49c.onrender.com"
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
