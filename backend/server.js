@@ -73,8 +73,10 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow server-to-server (no origin) and whitelisted origins
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      // Allow server-to-server (no origin), whitelisted origins, and ANY .vercel.app preview domain
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
       callback(new Error(`CORS: Origin '${origin}' is not allowed`));
     },
     credentials: true,
