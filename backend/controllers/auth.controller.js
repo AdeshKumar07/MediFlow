@@ -1,11 +1,13 @@
 const authService = require('../services/auth.service');
 const ApiResponse = require('../utils/apiResponse');
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
-  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+  secure  : isProd,                   // HTTPS only in production
+  sameSite: isProd ? 'none' : 'lax',  // 'none' required for cross-domain (Vercel → Render)
+  maxAge  : 7 * 24 * 60 * 60 * 1000  // 7 days in ms
 };
 
 class AuthController {
@@ -66,8 +68,8 @@ class AuthController {
       const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
       await authService.logout(refreshToken);
 
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
+      res.clearCookie('accessToken',  { httpOnly: true, secure: isProd, sameSite: isProd ? 'none' : 'lax' });
+      res.clearCookie('refreshToken', { httpOnly: true, secure: isProd, sameSite: isProd ? 'none' : 'lax' });
 
       res
         .status(200)
