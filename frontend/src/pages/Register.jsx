@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
-import { Activity, User, Mail, Lock, FileText, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Activity, User, Mail, Lock, FileText, Phone, ArrowLeft, ShieldCheck } from 'lucide-react';
 import registerBg from '../assets/register_bg.png';
 
 const Register = () => {
@@ -182,7 +182,37 @@ const Register = () => {
               )}
             </div>
 
+            {/* Phone Number */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-670 mb-1.5">
+                Phone Number
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                  <Phone className="h-4.5 w-4.5" />
+                </span>
+                <input
+                  type="tel"
+                  placeholder="+919876543210"
+                  className={`w-full bg-white pl-9 pr-4 py-2 rounded-xl border ${
+                    errors.phone ? 'border-red-500' : 'border-slate-200'
+                  } text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-300`}
+                  {...register('phone', {
+                    required: 'Phone number is required',
+                    pattern: {
+                      value: /^[+]?[0-9]{7,15}$/,
+                      message: 'Enter a valid phone number (7–15 digits, optional + prefix)'
+                    }
+                  })}
+                />
+              </div>
+              {errors.phone && (
+                <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>
+              )}
+            </div>
+
             {/* System Role Selection */}
+
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                 Assign System Role

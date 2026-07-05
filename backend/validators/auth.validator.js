@@ -29,7 +29,7 @@ const registerValidator = [
     .withMessage('Email is required')
     .isEmail()
     .withMessage('Please enter a valid email address')
-    .normalizeEmail(),
+    .toLowerCase(),
   check('password')
     .notEmpty()
     .withMessage('Password is required')
@@ -60,7 +60,8 @@ const loginValidator = [
   check('emailOrUsername')
     .trim()
     .notEmpty()
-    .withMessage('Email or Username is required'),
+    .withMessage('Email or Username is required')
+    .toLowerCase(),
   check('password')
     .notEmpty()
     .withMessage('Password is required'),
